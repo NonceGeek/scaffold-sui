@@ -6,7 +6,7 @@ import { JsonRpcProvider } from '@mysten/sui.js';
 
 const BaseAddr = "0x2";
 
-type NftListPros = { nfts: Array<Object> };
+type NftListPros = { nfts: Array<{ url: string, id: string, name: string, description: string }> };
 const NftList = ({ nfts }: NftListPros) => {
   return (
     <div>
@@ -15,7 +15,7 @@ const NftList = ({ nfts }: NftListPros) => {
           <p className="mt-4"><b>Minted NFTs:</b></p>
         ) : <></>
       }
-      {nfts && nfts.map((item, i) => <div className="gallery">
+      {nfts && nfts.map((item, i) => <div className="gallery" key={item.id}>
         <a target="_blank" href={"https://explorer.sui.io/object/" + item.id + "?network=" + process.env.NEXT_PUBLIC_SUI_NETWORK}>
           <img src={item.url} max-width="300" max-height="200"></img>
           <div className="name">{item.name}</div>
@@ -80,10 +80,12 @@ export default function Home() {
   }
 
   async function fetch_gas_coins() {
-    console.log("load gas list from ", account?.address);
     const gasObjects = await provider.getGasObjectsOwnedByAddress(account!.address)
     const gas_ids = gasObjects.map(item => item.objectId)
     const gasObjectDetail = await provider.getObjectBatch(gas_ids)
+    console.log(gasObjectDetail);
+
+
     const gasList = gasObjectDetail.map((item) => {
       return {
         id: item.details.data.fields.id.id,
@@ -91,17 +93,17 @@ export default function Home() {
       }
     });
     setGasObjects(gasList);
-    console.log("gasList", gasList);
   }
 
   async function fetch_example_nft() {
-    console.log("load example nft list from ", account?.address);
     const objects = await provider.getObjectsOwnedByAddress(account!.address)
     const nft_ids = objects
       .filter(item => item.type === BaseAddr + "::devnet_nft::DevNetNFT")
       .map(item => item.objectId)
     const nftObjects = await provider.getObjectBatch(nft_ids)
+
     const nfts = nftObjects.filter(item => item.status === "Exists").map(item => {
+      console.log("nft item : ", item);
       return {
         id: item.details.data.fields.id.id,
         name: item.details.data.fields.name,
@@ -109,7 +111,6 @@ export default function Home() {
         description: item.details.data.fields.description,
       }
     })
-    console.log("nfts :", nfts);
     setNfts(nfts)
   }
 

@@ -9,31 +9,31 @@ export default function Contract() {
     const [recipient, updateRecipient] = useState("");
     const [tx, setTx] = useState('')
 
+    function makeTranscaction() {
+        return {
+            packageObjectId: SUI_PACKAGE,
+            module: SUI_MODULE,
+            function: 'sword_create',
+            typeArguments: [],
+            // 类型错误，传递字符串类型，部分钱包会内部转化
+            arguments: [
+                magic,
+                strength,
+                recipient,
+            ],
+            gasBudget: 30000,
+        };
+    }
+
     const createSword = async () => {
         try {
-            const makeTranscaction = () => {
-                return {
-                    transaction: {
-                        kind: 'moveCall',
-                        data: {
-                            packageObjectId: SUI_PACKAGE,
-                            module: SUI_MODULE,
-                            function: 'sword_create',
-                            typeArguments: [],
-                            // 类型错误，传递字符串类型，部分钱包会内部转化
-                            arguments: [
-                                magic,
-                                strength,
-                                recipient,
-                            ],
-                            gasBudget: 10000,
-                        }
-                    }
+            const data = makeTranscaction();
+            const resData = await signAndExecuteTransaction({
+                transaction: {
+                    kind: 'moveCall',
+                    data
                 }
-            }
-
-            let params = makeTranscaction();
-            const resData = await signAndExecuteTransaction(params);
+            });
             console.log('success', resData);
             setTx('https://explorer.sui.io/transaction/' + resData.certificate.transactionDigest)
         } catch (e) {
