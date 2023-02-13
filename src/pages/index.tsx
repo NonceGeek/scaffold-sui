@@ -3,26 +3,42 @@ import { useEffect, useState } from "react";
 import React from "react";
 import Link from 'next/link';
 import { JsonRpcProvider } from '@mysten/sui.js';
-
+import { SUI_PACKAGE, SUI_MODULE } from "../config/constants";
 
 const BaseAddr = "0x2";
-
 type NftListPros = { nfts: Array<{ url: string, id: string, name: string, description: string }> };
 const NftList = ({ nfts }: NftListPros) => {
-  return (
-    <div>
-      {
-        nfts.length != 0 ? (
-          <p className="mt-4"><b>Minted NFTs:</b></p>
-        ) : <></>
-      }
-      {nfts && nfts.map((item, i) => <div className="gallery" key={item.id}>
-        <a target="_blank" href={"https://explorer.sui.io/object/" + item.id + "?network=" + process.env.NEXT_PUBLIC_SUI_NETWORK}>
-          <img src={item.url} max-width="300" max-height="200"></img>
-          <div className="name">{item.name}</div>
-          <div className="desc">{item.description}</div>
-        </a>
-      </div>)}
+  return nfts && (
+    <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
+      <div className="card-body">
+        <h2 className="card-title">Minted NFTs:</h2>
+        {
+          nfts.map((item, i) => <div className="gallery" key={item.id}>
+            <a target="_blank" href={"https://explorer.sui.io/object/" + item.id + "?network=" + process.env.NEXT_PUBLIC_SUI_NETWORK}>
+              <img src={item.url} max-width="300" max-height="200"></img>
+              <div className="name">{item.name}</div>
+              <div className="desc">{item.description}</div>
+            </a>
+          </div>)
+        }
+      </div>
+    </div>
+  )
+}
+
+
+type SwordListPros = { swords: Array<{ id: string, magic: number, strength: number }> };
+const SwordList = ({ swords }: SwordListPros) => {
+  return swords && (
+    <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
+      <div className="card-body">
+        <h2 className="card-title">swords list:</h2>
+        {
+          swords.map((item, i) =>
+            <p key={i}>Magic {item.magic} , Strength {item.strength}</p>
+          )
+        }
+      </div>
     </div>
   )
 }
@@ -42,6 +58,7 @@ export default function Home() {
   const [message, setMessage] = useState('');
   const [tx, setTx] = useState('');
   const [nfts, setNfts] = useState<Array<{ id: string, name: string, url: string, description: string }>>([]);
+  const [swords, setSword] = useState<Array<{ id: string, magic: number, strength: number }>>([]);
   const [gasObjects, setGasObjects] = useState<Array<{ id: string, value: Number, }>>([]);
 
   async function mint_example_nft() {
@@ -81,7 +98,6 @@ export default function Home() {
   }
 
   async function fetch_gas_coins() {
-
     const gasObjects = await provider.getGasObjectsOwnedByAddress(account!.address)
     const gas_ids = gasObjects.map(item => item.objectId)
     const gasObjectDetail = await provider.getObjectBatch(gas_ids)
@@ -101,7 +117,6 @@ export default function Home() {
       .filter(item => item.type === BaseAddr + "::devnet_nft::DevNetNFT")
       .map(item => item.objectId)
     const nftObjects = await provider.getObjectBatch(nft_ids)
-
     const nfts = nftObjects.filter(item => item.status === "Exists").map((item: any) => {
       return {
         id: item.details.data.fields.id.id,
@@ -113,10 +128,27 @@ export default function Home() {
     setNfts(nfts)
   }
 
+  async function fetch_sword() {
+    const objects = await provider.getObjectsOwnedByAddress(account!.address)
+    const sword_ids = objects
+      .filter(item => item.type === SUI_PACKAGE + "::" + SUI_MODULE + "::Sword")
+      .map(item => item.objectId)
+    const swordObjects = await provider.getObjectBatch(sword_ids)
+    const swords = swordObjects.filter(item => item.status === "Exists").map((item: any) => {
+      return {
+        id: item.details.data.fields.id.id,
+        magic: item.details.data.fields.magic,
+        strength: item.details.data.fields.strength,
+      }
+    })
+    setSword(swords)
+  }
+
   useEffect(() => {
     (async () => {
       if (connected) {
         fetch_example_nft()
+        fetch_sword()
       }
     })()
   }, [connected, tx])
@@ -164,6 +196,7 @@ export default function Home() {
         <p className="mt-4">{message}{message && <Link href={tx}>, View transaction</Link>}</p>
       </div>
       <NftList nfts={nfts} />
+      <SwordList swords={swords} />
 
 
     </div>

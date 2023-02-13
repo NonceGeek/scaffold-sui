@@ -1,7 +1,13 @@
 import { useWallet } from "@suiet/wallet-kit";
 import { useEffect, useState } from "react";
 import { SUI_PACKAGE, SUI_MODULE } from "../config/constants";
+import { JsonRpcProvider } from '@mysten/sui.js';
+
+
+
 export default function Contract() {
+
+    const provider = new JsonRpcProvider();
 
     const [magic, updateMagic] = useState('');
     const [strength, updateStrength] = useState('');
@@ -44,46 +50,52 @@ export default function Contract() {
 
     return (
         <>
-            <div className="m-7 p-4  w-full mt-4 rounded-md border-2">
-                <p>Package Module : {SUI_PACKAGE}</p>
-                {tx == "" ? (<></>) : (
-                    <a target="_blank" href={tx}>{tx}</a>
-                )}
+            <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
+                <div className="card-body">
+                    <h2 className="card-title">
+                        Sui Test Package Module: {SUI_PACKAGE}
+                    </h2>
+                </div>
             </div>
-            <div className="m-7 p-4  w-full mt-4 rounded-md border-2">
-                <input
-                    placeholder="Magic value"
-                    className="mt-8 p-4 input input-bordered input-primary w-full"
-                    onChange={(e) => {
-                        updateMagic(e.target.value)
-                    }}
-                />
-                <input
-                    placeholder="Strength value"
-                    className="mt-8 p-4 input input-bordered input-primary w-full"
-                    onChange={(e) =>
-                        updateStrength(e.target.value)
-                    }
-                />
-                <input
-                    placeholder="Recipient"
-                    className="mt-8 p-4 input input-bordered input-primary w-full"
-                    value={recipient}
-                    onChange={(e) =>
-                        updateRecipient(e.target.value)
-                    }
-                />
-                <button
-                    onClick={createSword}
-                    className={
-                        "btn btn-primary font-bold mt-4 text-white rounded p-4 shadow-lg"
-                    }>
-                    Create Sword
-                </button>
+
+
+            <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
+                <div className="card-body">
+                    <h2 className="card-title">create a sword</h2>
+                    <input
+                        placeholder="Magic value"
+                        className="mt-8 p-4 input input-bordered input-primary w-full"
+                        onChange={(e) => {
+                            updateMagic(e.target.value)
+                        }}
+                    />
+                    <input
+                        placeholder="Strength value"
+                        className="mt-8 p-4 input input-bordered input-primary w-full"
+                        onChange={(e) =>
+                            updateStrength(e.target.value)
+                        }
+                    />
+                    <input
+                        placeholder="Recipient"
+                        className="mt-8 p-4 input input-bordered input-primary w-full"
+                        value={recipient}
+                        onChange={(e) =>
+                            updateRecipient(e.target.value)
+                        }
+                    />
+                    <div className="card-actions justify-end">
+                        <button
+                            onClick={createSword}
+                            className={
+                                "btn btn-primary font-bold mt-4 text-white rounded p-4 shadow-lg"
+                            }>
+                            Create Sword
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div className="m-7 p-4  w-full mt-4 rounded-md border-2">
-                <p>Transfer Sword</p>
-            </div>
+
         </>
     );
 }
