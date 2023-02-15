@@ -27,17 +27,44 @@ const NftList = ({ nfts }: NftListPros) => {
 }
 
 
-type SwordListPros = { swords: Array<{ id: string, magic: number, strength: number }> };
-const SwordList = ({ swords }: SwordListPros) => {
+type SwordListPros = { swords: Array<{ id: string, magic: number, strength: number }>, transfer: Function };
+const SwordList = ({ swords, transfer }: SwordListPros) => {
   return swords && (
     <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
       <div className="card-body">
         <h2 className="card-title">swords list:</h2>
-        {
-          swords.map((item, i) =>
-            <p key={i}>Magic {item.magic} , Strength {item.strength}</p>
-          )
-        }
+
+        <div className="overflow-x-auto">
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Magic</th>
+                <th>Strength</th>
+                <th>Operate</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              {
+                swords.map((item, i) =>
+                  <tr>
+                    <th>{item.id}</th>
+                    <td>{item.magic}</td>
+                    <td>{item.strength} </td>
+                    <td>
+                      <a href="javascript:;" className="link link-hover link-primary" onClick={() => { transfer(item.id) }}>Transfer</a>
+                    </td>
+                  </tr>
+                )
+              }
+
+
+            </tbody>
+          </table>
+        </div>
+
+
       </div>
     </div>
   )
@@ -60,6 +87,9 @@ export default function Home() {
   const [nfts, setNfts] = useState<Array<{ id: string, name: string, url: string, description: string }>>([]);
   const [swords, setSword] = useState<Array<{ id: string, magic: number, strength: number }>>([]);
   const [gasObjects, setGasObjects] = useState<Array<{ id: string, value: Number, }>>([]);
+  const [displayModal, toggleDisplay] = useState(false);
+  const [recipient, updateRecipient] = useState("");
+  const [transfer_id, setTransferId] = useState("");
 
   async function mint_example_nft() {
     setMessage("");
@@ -95,6 +125,46 @@ export default function Home() {
       ],
       gasBudget: 30000,
     };
+  }
+
+  async function doTransfer() {
+    function makeTranscaction() {
+      return {
+        packageObjectId: SUI_PACKAGE,
+        module: SUI_MODULE,
+        function: 'sword_transfer',
+        typeArguments: [],
+        // 类型错误，传递字符串类型，部分钱包会内部转化
+        arguments: [
+          transfer_id,
+          recipient,
+        ],
+        gasBudget: 30000,
+      };
+    }
+
+    setMessage("");
+    try {
+      const data = makeTranscaction();
+      const resData = await signAndExecuteTransaction({
+        transaction: {
+          kind: 'moveCall',
+          data,
+        },
+      });
+      console.log('success', resData);
+      setMessage('Mint succeeded');
+      setTx('https://explorer.sui.io/transaction/' + resData.certificate.transactionDigest)
+    } catch (e) {
+      console.error('failed', e);
+      setMessage('Mint failed: ' + e);
+      setTx('');
+    }
+  }
+
+  async function transferSword(id: string) {
+    setTransferId(id);
+    toggleDisplay(true);
   }
 
   async function fetch_gas_coins() {
@@ -163,6 +233,26 @@ export default function Home() {
 
   return (
     <div>
+      <div className={displayModal ? "modal modal-bottom sm:modal-middle modal-open" : "modal modal-bottom sm:modal-middle"}>
+        <div className="modal-box">
+          <label onClick={() => { toggleDisplay(false) }} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+          <h3 className="font-bold text-lg">Input recent address</h3>
+          <input
+            placeholder="Recipient"
+            className="mt-8 p-4 input input-bordered input-primary w-full"
+            value={recipient}
+            onChange={(e) =>
+              updateRecipient(e.target.value)
+            }
+          />
+          <div className="modal-action">
+            <label htmlFor="my-modal-6" className="btn" onClick={() => {
+              toggleDisplay(!displayModal);
+              doTransfer();
+            }}>Done!</label>
+          </div>
+        </div>
+      </div>
       <div>
         <p><b>Mint Example NFT</b></p>
         <input
@@ -196,9 +286,9 @@ export default function Home() {
         <p className="mt-4">{message}{message && <Link href={tx}>, View transaction</Link>}</p>
       </div>
       <NftList nfts={nfts} />
-      <SwordList swords={swords} />
+      <SwordList swords={swords} transfer={transferSword} />
 
 
-    </div>
+    </div >
   );
 }
