@@ -41,7 +41,7 @@ export default function Contract() {
                 }
             });
             console.log('success', resData);
-            setTx('https://explorer.sui.io/transaction/' + resData.certificate.transactionDigest)
+            setTx(resData.certificate.transactionDigest)
         } catch (e) {
             console.error('failed', e);
             setTx('');
@@ -85,13 +85,8 @@ export default function Contract() {
                         }
                     />
                     <div className="card-actions justify-end">
-                        <button
-                            onClick={createSword}
-                            className={
-                                "btn btn-primary font-bold mt-4 text-white rounded p-4 shadow-lg"
-                            }>
-                            Create Sword
-                        </button>
+                        <button className="btn btn-primary" onClick={createSword}>Create Sword</button>
+                        {tx == "" ? "" : <a target={"_blank"} className="btn btn-info" href={'https://explorer.sui.io/transaction/' + tx + '?network=' + NETWORK}>{tx}</a>}
                     </div>
                 </div>
             </div>
