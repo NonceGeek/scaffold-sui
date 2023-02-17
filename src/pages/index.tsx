@@ -253,42 +253,46 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div>
-        <p><b>Mint Example NFT</b></p>
-        <input
-          placeholder="NFT Name"
-          className="mt-4 p-4 input input-bordered input-primary w-full"
-          onChange={(e) =>
-            updateFormInput({ ...formInput, name: e.target.value })
-          }
-        />
-        <input
-          placeholder="NFT Description"
-          className="mt-8 p-4 input input-bordered input-primary w-full"
-          onChange={(e) =>
-            updateFormInput({ ...formInput, description: e.target.value })
-          }
-        />
-        <input
-          placeholder="NFT IMAGE URL"
-          className="mt-8 p-4 input input-bordered input-primary w-full"
-          onChange={(e) =>
-            updateFormInput({ ...formInput, url: e.target.value })
-          }
-        />
-        <button
-          onClick={mint_example_nft}
-          className={
-            "btn btn-primary font-bold mt-4 text-white rounded p-4 shadow-lg"
-          }>
-          Mint example NFT
-        </button>
-        <p className="mt-4">{message}{message && <Link href={tx}>, View transaction</Link>}</p>
+
+      <div className="card lg:card-side bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Mint Example NFT:</h2>
+          <input
+            placeholder="NFT Name"
+            className="mt-4 p-4 input input-bordered input-primary w-full"
+            onChange={(e) =>
+              updateFormInput({ ...formInput, name: e.target.value })
+            }
+          />
+          <input
+            placeholder="NFT Description"
+            className="mt-8 p-4 input input-bordered input-primary w-full"
+            onChange={(e) =>
+              updateFormInput({ ...formInput, description: e.target.value })
+            }
+          />
+          <input
+            placeholder="NFT IMAGE URL"
+            className="mt-8 p-4 input input-bordered input-primary w-full"
+            onChange={(e) =>
+              updateFormInput({ ...formInput, url: e.target.value })
+            }
+          />
+          <p className="mt-4">{message}{message && <Link href={tx}>, View transaction</Link>}</p>
+          <div className="card-actions justify-end">
+            <button
+              onClick={mint_example_nft}
+              className={
+                "btn btn-primary btn-xl"
+              }>
+              Mint example NFT
+            </button>
+          </div>
+        </div>
       </div>
+
       <NftList nfts={nfts} />
       <SwordList swords={swords} transfer={transferSword} />
-
-
     </div >
   );
 }
