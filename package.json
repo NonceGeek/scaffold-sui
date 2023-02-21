@@ -1,5 +1,5 @@
 {
-  "name": "scaffold-aptos",
+  "name": "scaffold-sui",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,9 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@mysten/sui.js": "^0.22.0",
-    "@suiet/wallet-kit": "0.1.20",
+    "@mysten/sui.js": "^0.28.0",
     "@solana/web3.js": "^1.66.2",
+    "@suiet/wallet-kit": "^0.1.25",
     "daisyui": "^2.24.0",
     "dotenv": "^16.0.1",
     "next": "^12.3.1-canary.0",
