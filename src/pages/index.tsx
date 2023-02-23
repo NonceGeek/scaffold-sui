@@ -4,6 +4,8 @@ import React from "react";
 import Link from 'next/link';
 import { JsonRpcProvider } from '@mysten/sui.js';
 import { SUI_PACKAGE, SUI_MODULE } from "../config/constants";
+import { useRouter } from "next/router";
+import * as tweetnacl from 'tweetnacl';
 
 const BaseAddr = "0x2";
 type NftListPros = { nfts: Array<{ url: string, id: string, name: string, description: string }> };
@@ -24,6 +26,65 @@ const NftList = ({ nfts }: NftListPros) => {
       </div>
     </div>
   )
+}
+type SignerPros = { updateSignerContent: Function };
+const Signer = ({ updateSignerContent }: SignerPros) => {
+  const router = useRouter();
+  const [data, updateSignData] = useState("");
+  useEffect(() => {
+    (async () => {
+      console.log("render once ...");
+      if (typeof router.query.msg == 'string') {
+        updateSignData(router.query.msg);
+      }
+    })();
+  }, [router.query]);
+  const wallet = useWallet();
+
+  const signContentAction = async () => {
+    try {
+      const msg = 'Hello world!'
+      const result = await wallet.signMessage({
+        message: new TextEncoder().encode(msg)
+      })
+      if (!result) return
+      console.log('signMessage success', result)
+      const isSignatureTrue = tweetnacl.sign.detached.verify(
+        result.signedMessage,
+        result.signature,
+        wallet.account?.publicKey as Uint8Array,
+      )
+      console.log('verify signature with publicKey via tweetnacl', isSignatureTrue)
+    } catch (e) {
+      console.log(e);
+      alert(e);
+    }
+  }
+
+  return (
+    <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
+      <div className="card-body">
+        <h2 className="card-title">Sui Signer</h2>
+        <input
+          placeholder="NFT Description"
+          className="mt-8 p-4 input input-bordered input-primary w-full"
+          value={data}
+          onChange={(e) =>
+            updateSignData(e.target.value)
+          }
+        />
+        <div className="card-actions justify-end">
+          <button
+            onClick={signContentAction}
+            className={
+              "btn btn-primary btn-xl"
+            }>
+            Sign Content
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 
@@ -58,13 +119,9 @@ const SwordList = ({ swords, transfer }: SwordListPros) => {
                   </tr>
                 )
               }
-
-
             </tbody>
           </table>
         </div>
-
-
       </div>
     </div>
   )
@@ -233,6 +290,9 @@ export default function Home() {
 
   return (
     <div>
+
+      <Signer />
+
       <div className={displayModal ? "modal modal-bottom sm:modal-middle modal-open" : "modal modal-bottom sm:modal-middle"}>
         <div className="modal-box">
           <label onClick={() => { toggleDisplay(false) }} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
@@ -254,7 +314,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="card lg:card-side bg-base-100 shadow-xl">
+      <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
         <div className="card-body">
           <h2 className="card-title">Mint Example NFT:</h2>
           <input
