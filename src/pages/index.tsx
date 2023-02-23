@@ -27,8 +27,8 @@ const NftList = ({ nfts }: NftListPros) => {
     </div>
   )
 }
-type SignerPros = { updateSignerContent: Function };
-const Signer = ({ updateSignerContent }: SignerPros) => {
+
+const Signer = () => {
   const router = useRouter();
   const [data, updateSignData] = useState("");
   useEffect(() => {
