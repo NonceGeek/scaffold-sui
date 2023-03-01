@@ -219,7 +219,9 @@ export default function Home() {
       });
       console.log('success', resData);
       setMessage('Mint succeeded');
-      setTx('https://explorer.sui.io/transaction/' + resData.certificate.transactionDigest)
+      if (resData && resData.certificate && resData.certificate.transactionDigest) {
+        setTx('https://explorer.sui.io/transaction/' + resData.certificate.transactionDigest)
+      }
     } catch (e) {
       console.error('failed', e);
       setMessage('Mint failed: ' + e);
