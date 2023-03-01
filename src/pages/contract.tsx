@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import { SUI_PACKAGE, SUI_MODULE, NETWORK } from "../config/constants";
 import { JsonRpcProvider } from '@mysten/sui.js';
 
-
-
 export default function Contract() {
 
     const provider = new JsonRpcProvider();
