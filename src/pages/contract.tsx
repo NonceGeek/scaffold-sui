@@ -41,7 +41,9 @@ export default function Contract() {
                 }
             });
             console.log('success', resData);
-            setTx(resData.certificate.transactionDigest)
+            if (resData != null) {
+                setTx(resData.certificate.transactionDigest)
+            }
         } catch (e) {
             console.error('failed', e);
             setTx('');
