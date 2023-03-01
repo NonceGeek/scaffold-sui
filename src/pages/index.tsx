@@ -6,6 +6,7 @@ import { JsonRpcProvider } from '@mysten/sui.js';
 import { SUI_PACKAGE, SUI_MODULE } from "../config/constants";
 import { useRouter } from "next/router";
 import * as tweetnacl from 'tweetnacl';
+import { toHEX } from '@mysten/bcs';
 
 const BaseAddr = "0x2";
 type NftListPros = { nfts: Array<{ url: string, id: string, name: string, description: string }> };
@@ -31,6 +32,7 @@ const NftList = ({ nfts }: NftListPros) => {
 const Signer = () => {
   const router = useRouter();
   const [data, updateSignData] = useState("");
+  const [result, updateSignResult] = useState("");
   useEffect(() => {
     (async () => {
       console.log("render once ...");
@@ -43,9 +45,8 @@ const Signer = () => {
 
   const signContentAction = async () => {
     try {
-      const msg = 'Hello world!'
       const result = await wallet.signMessage({
-        message: new TextEncoder().encode(msg)
+        message: new TextEncoder().encode(data)
       })
       if (!result) return
       console.log('signMessage success', result)
@@ -55,6 +56,7 @@ const Signer = () => {
         wallet.account?.publicKey as Uint8Array,
       )
       console.log('verify signature with publicKey via tweetnacl', isSignatureTrue)
+      updateSignResult(toHEX(result.signature));
     } catch (e) {
       console.log(e);
       alert(e);
@@ -66,13 +68,16 @@ const Signer = () => {
       <div className="card-body">
         <h2 className="card-title">Sui Signer</h2>
         <input
-          placeholder="NFT Description"
+          placeholder="message to sign"
           className="mt-8 p-4 input input-bordered input-primary w-full"
           value={data}
           onChange={(e) =>
             updateSignData(e.target.value)
           }
         />
+        {
+          result == "" || (<>Signer Reult :  <b>{result}</b> </>)
+        }
         <div className="card-actions justify-end">
           <button
             onClick={signContentAction}
@@ -86,6 +91,7 @@ const Signer = () => {
     </div>
   );
 }
+
 
 
 type SwordListPros = { swords: Array<{ id: string, magic: number, strength: number }>, transfer: Function };
