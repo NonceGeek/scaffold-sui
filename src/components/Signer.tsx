@@ -2,13 +2,12 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useWallet } from "@suiet/wallet-kit";
-// import * as tweetnacl from 'tweetnacl';
-// import { toHEX } from '@mysten/bcs';
+import { SignedMessage } from "@mysten/sui.js";
 
 export function Signer() {
     const router = useRouter();
     const [data, updateSignData] = useState("");
-    const [result, updateSignResult] = useState("");
+    const [result, updateSignResult] = useState<SignedMessage>({ messageBytes: "", signature: "" });
     useEffect(() => {
         (async () => {
             console.log("render once ...");
@@ -17,23 +16,19 @@ export function Signer() {
             }
         })();
     }, [router.query]);
-    const { signMessage, account } = useWallet();
-
-
+    const { signMessage } = useWallet();
     const signContentAction = async () => {
-
         try {
             const result = await signMessage({
                 message: new TextEncoder().encode(data)
             })
             if (!result) return
             console.log('signMessage success', result)
-            updateSignResult(result.signature);
+            updateSignResult(result);
         } catch (e) {
             console.log(e);
             alert(e);
         }
-
     }
 
     return (
@@ -49,7 +44,7 @@ export function Signer() {
                     }
                 />
                 {
-                    result == "" || (<>Signer Reult :  <b>{result}</b> </>)
+                    result.messageBytes == "" || (<> <p>messageBytes: {result.messageBytes}</p> <b>signature: {result.signature}</b> </>)
                 }
                 <div className="card-actions justify-end">
                     <button

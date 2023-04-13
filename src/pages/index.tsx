@@ -1,34 +1,17 @@
 import { useWallet } from "@suiet/wallet-kit";
+import { JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
 import React, { useEffect, useState } from "react";
 import Link from 'next/link';
-import { JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
-import { SUI_PACKAGE, SUI_MODULE, NETWORK } from "../config/constants";
-
+import { SUI_PACKAGE, NETWORK, SUI_MODULE } from "../config/constants";
 import { Signer } from "../components/Signer";
-
-type NftListPros = { nfts: Array<{ url: string, id: string, name: string, description: string }> };
-const NftList = ({ nfts }: NftListPros) => {
-  return nfts && (
-    <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
-      <div className="card-body">
-        <h2 className="card-title">Minted NFTs:</h2>
-        {
-          nfts.map((item, i) => <div className="gallery" key={item.id}>
-            <a target="_blank" href={"https://explorer.sui.io/object/" + item.id + "?network=" + process.env.NEXT_PUBLIC_SUI_NETWORK}>
-              <img src={item.url} max-width="300" max-height="200"></img>
-              <div className="name">{item.name}</div>
-              <div className="desc">{item.description}</div>
-            </a>
-          </div>)
-        }
-      </div>
-    </div>
-  )
-}
+import { NftList } from "../components/NftList";
+import TransacitonLink from "../utils/tools";
 
 export default function Home() {
-  const provider = new JsonRpcProvider();
-  const { account, connected, signAndExecuteTransactionBlock } = useWallet();
+
+  const [message, setMessage] = useState('');
+  const [transaction, setTransaction] = useState('');
+  const [nfts, setNfts] = useState<Array<{ id: string, name: string, url: string, description: string }>>([]);
   const [formInput, updateFormInput] = useState<{
     name: string;
     url: string;
@@ -38,10 +21,9 @@ export default function Home() {
     url: "",
     description: "",
   });
-  const [message, setMessage] = useState('');
-  const [transaction, setTransaction] = useState('');
-  const [nfts, setNfts] = useState<Array<{ id: string, name: string, url: string, description: string }>>([]);
-  const [recipient, updateRecipient] = useState("");
+
+  const provider = new JsonRpcProvider();
+  const { account, connected, signAndExecuteTransactionBlock } = useWallet();
 
   async function mint_example_nft() {
     setMessage("");
@@ -63,9 +45,9 @@ export default function Home() {
 
       updateFormInput({ name: "", url: "", description: "" })
       console.log('success', resData);
-      setMessage('Added succeeded');
+      setMessage('Mint succeeded');
       if (resData && resData.digest && resData.digest) {
-        setTransaction('https://explorer.sui.io/transaction/' + resData.digest + "?network=" + NETWORK);
+        setTransaction(TransacitonLink(resData.digest, SUI_MODULE));
       }
     } catch (e) {
       console.error('failed', e);
@@ -99,9 +81,7 @@ export default function Home() {
         })
         setNfts(nfts)
       }
-
     }
-
   }
 
   useEffect(() => {
@@ -114,7 +94,6 @@ export default function Home() {
 
   return (
     <div>
-
       <Signer />
 
       <div className="card lg:card-side bg-base-100 shadow-xl mt-5">
