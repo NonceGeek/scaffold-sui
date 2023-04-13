@@ -2,5 +2,6 @@ node_modules/*
 package-lock.json
 yarn.lock
 .next
-move_package/build/*
-move_package/sui.log.*
+move/build/*
+move/sui.log.*
+.env.local
