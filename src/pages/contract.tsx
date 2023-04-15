@@ -2,7 +2,7 @@ import { useWallet } from "@suiet/wallet-kit";
 import { JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
 import { useEffect, useState } from "react";
 import { SUI_PACKAGE, NETWORK } from "../config/constants";
-import TransacitonLink from "../utils/tools";
+import { PackageLink, TransacitonLink } from "../utils/links";
 import { SwordList } from "../components/SwordList";
 
 export default function Contract() {
@@ -154,7 +154,7 @@ export default function Contract() {
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>
-                        Sui Package Module: <a className="link link-primary" target={"_blank"} href={"https://explorer.sui.io/object/" + SUI_PACKAGE + "?network=" + NETWORK}>{SUI_PACKAGE}</a>
+                        Sui Package Module: <a className="link link-primary" target={"_blank"} href={PackageLink(SUI_PACKAGE)}>{SUI_PACKAGE}</a>
                     </span>
                 </div>
             </div>
@@ -195,6 +195,6 @@ export default function Contract() {
 
             <SwordList swords={swords} transfer={transferSword} />
 
-        </div>
+        </div >
     );
 }
