@@ -1,3 +1,4 @@
+import { ObjectLink } from "../utils/links";
 type NftListPros = { nfts: Array<{ url: string, id: string, name: string, description: string }> };
 export function NftList({ nfts }: NftListPros) {
     return nfts && (
@@ -6,7 +7,7 @@ export function NftList({ nfts }: NftListPros) {
                 <h2 className="card-title">Minted NFTs:</h2>
                 {
                     nfts.map((item, i) => <div className="gallery" key={item.id}>
-                        <a target="_blank" href={"https://explorer.sui.io/object/" + item.id + "?network=" + process.env.NEXT_PUBLIC_SUI_NETWORK}>
+                        <a target="_blank" href={ObjectLink(item.id)}>
                             <img src={item.url} max-width="300" max-height="200"></img>
                             <div className="name">{item.name}</div>
                             <div className="desc">{item.description}</div>
@@ -14,6 +15,6 @@ export function NftList({ nfts }: NftListPros) {
                     </div>)
                 }
             </div>
-        </div>
+        </div >
     )
 }
