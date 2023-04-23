@@ -1,7 +1,7 @@
 import { useWallet } from "@suiet/wallet-kit";
 import { JsonRpcProvider, TransactionBlock } from '@mysten/sui.js';
 import { useEffect, useState } from "react";
-import { SUI_PACKAGE, NETWORK } from "../config/constants";
+import { SUI_PACKAGE } from "../config/constants";
 import { PackageLink, TransacitonLink } from "../utils/links";
 import { SwordList } from "../components/SwordList";
 
@@ -9,8 +9,8 @@ export default function Contract() {
     const [swords, setSwords] = useState<Array<any>>([]);
     const [transaction, setTransaction] = useState('');
     const [displayModal, toggleDisplay] = useState(false);
-    const [sword_id, updateSwordId] = useState('')
-    const [to_recipient, updateToRecipient] = useState("");
+    const [swordID, updateSwordId] = useState('')
+    const [toRecipient, updateToRecipient] = useState("");
     const [formInput, updateFormInput] = useState<{
         magic: string;
         strength: string;
@@ -32,10 +32,10 @@ export default function Contract() {
         try {
             const tx = new TransactionBlock();
             tx.moveCall({
-                target: SUI_PACKAGE + "::my_module::sword_transfer" as any,
+                target: `${SUI_PACKAGE}::my_module::sword_transfer` as any,
                 arguments: [
-                    tx.pure(sword_id),
-                    tx.pure(to_recipient),
+                    tx.pure(swordID),
+                    tx.pure(toRecipient),
                 ]
             })
 
@@ -55,11 +55,11 @@ export default function Contract() {
     }
 
 
-    async function fetch_sword() {
+    async function fetchSword() {
         if (account?.address == null) {
             return;
         }
-        const swordType = SUI_PACKAGE + "::my_module::Sword";
+        const swordType = `${SUI_PACKAGE}::my_module::Sword`;
         const objects = await provider.getOwnedObjects({
             owner: account?.address,
             filter: {
@@ -71,15 +71,21 @@ export default function Contract() {
             }
         })
         console.log(objects);
-        let swords = objects.data.map(item => {
+        const swords = objects.data.map(item => {
             console.log("old item : ", item);
             if (item.data && item.data.content) {
                 console.log("old data content ", item.data.content);
-                let content = item.data.content as any;
-                let { magic, strength } = content.fields as any;
+                const content = item.data.content as any;
+                const { magic, strength } = content.fields as any;
                 return {
                     id: item.data?.objectId,
                     magic, strength
+                }
+            } else {
+                return {
+                    id: "",
+                    magic: 0,
+                    strength: 0
                 }
             }
         })
@@ -91,7 +97,7 @@ export default function Contract() {
     useEffect(() => {
         (async () => {
             if (connected) {
-                fetch_sword()
+                fetchSword()
             }
         })()
     }, [connected, transaction])
@@ -102,7 +108,7 @@ export default function Contract() {
             const tx = new TransactionBlock();
             const { magic, strength, recipient } = formInput;
             tx.moveCall({
-                target: SUI_PACKAGE + "::my_module::sword_create" as any,
+                target: `${SUI_PACKAGE}::my_module::sword_create` as any,
                 arguments: [
                     tx.pure(magic),
                     tx.pure(strength),
@@ -136,7 +142,7 @@ export default function Contract() {
                     <input
                         placeholder="Recipient"
                         className="mt-8 p-4 input input-bordered input-primary w-full"
-                        value={to_recipient}
+                        value={toRecipient}
                         onChange={(e) =>
                             updateToRecipient(e.target.value)
                         }
@@ -152,9 +158,10 @@ export default function Contract() {
 
             <div className="alert alert-info shadow-lg">
                 <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current flex-shrink-0 w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>
-                        Sui Package Module: <a className="link link-primary" target={"_blank"} href={PackageLink(SUI_PACKAGE)}>{SUI_PACKAGE}</a>
+                        Sui Package Module: <a className="link link-primary" target="_blank" rel="noreferrer" href={PackageLink(SUI_PACKAGE)}>{SUI_PACKAGE}</a>
                     </span>
                 </div>
             </div>
@@ -188,7 +195,7 @@ export default function Contract() {
                     />
                     <div className="card-actions justify-end">
                         <button className="btn btn-primary" onClick={createSword}>Create Sword</button>
-                        {transaction == "" ? "" : <a target={"_blank"} className="btn btn-info" href={transaction}>{transaction}</a>}
+                        {transaction === "" ? "" : <a target="_blank" rel="noreferrer" className="btn btn-info" href={transaction}>{transaction}</a>}
                     </div>
                 </div>
             </div>
