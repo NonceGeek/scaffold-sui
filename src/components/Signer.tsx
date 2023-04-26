@@ -11,7 +11,7 @@ export function Signer() {
     useEffect(() => {
         (async () => {
             console.log("render once ...");
-            if (typeof router.query.msg == 'string') {
+            if (typeof router.query.msg === 'string') {
                 updateSignData(router.query.msg);
             }
         })();
@@ -44,14 +44,13 @@ export function Signer() {
                     }
                 />
                 {
-                    result.messageBytes == "" || (<> <p>messageBytes: {result.messageBytes}</p> <b>signature: {result.signature}</b> </>)
+                    result.messageBytes === "" || (<> <p>messageBytes: {result.messageBytes}</p> <b>signature: {result.signature}</b> </>)
                 }
                 <div className="card-actions justify-end">
                     <button
                         onClick={signContentAction}
-                        className={
-                            "btn btn-primary btn-xl"
-                        }>
+                        className="btn btn-primary btn-xl"
+                    >
                         Sign Content
                     </button>
                 </div>

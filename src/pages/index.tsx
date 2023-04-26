@@ -25,13 +25,14 @@ export default function Home() {
   const provider = new JsonRpcProvider();
   const { account, connected, signAndExecuteTransactionBlock } = useWallet();
 
-  async function mint_example_nft() {
+  async function mintExampleNFT() {
     setMessage("");
     const { name, url, description } = formInput;
+    console.log(`${SUI_PACKAGE}::devnet_nft::mint`);
     try {
       const tx = new TransactionBlock();
       tx.moveCall({
-        target: SUI_PACKAGE + "::devnet_nft::mint" as any,
+        target: `${SUI_PACKAGE}::devnet_nft::mint` as any,
         arguments: [
           tx.pure(name),
           tx.pure(description),
@@ -51,13 +52,13 @@ export default function Home() {
       }
     } catch (e) {
       console.error('failed', e);
-      setMessage('Mint failed: ' + e);
+      setMessage(`Mint failed ${e}`);
       setTransaction('');
     }
   }
 
-  async function fetch_example_nft() {
-    const nftItemType = SUI_PACKAGE + "::devnet_nft::DevNetNFT";
+  async function fetchExampleNFT() {
+    const nftItemType = `${SUI_PACKAGE}::devnet_nft::DevNetNFT`;
     if (account != null) {
       const objects = await provider.getOwnedObjects({
         owner: account?.address, filter: {
@@ -87,7 +88,7 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       if (connected) {
-        fetch_example_nft()
+        fetchExampleNFT()
       }
     })()
   }, [connected, transaction])
@@ -123,10 +124,9 @@ export default function Home() {
           <p className="mt-4">{message}{message && <Link href={transaction}>, View transaction</Link>}</p>
           <div className="card-actions justify-end">
             <button
-              onClick={mint_example_nft}
-              className={
-                "btn btn-primary btn-xl"
-              }>
+              onClick={mintExampleNFT}
+              className="btn btn-primary btn-xl"
+            >
               Mint example NFT
             </button>
           </div>

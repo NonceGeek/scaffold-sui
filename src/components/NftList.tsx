@@ -7,8 +7,8 @@ export function NftList({ nfts }: NftListPros) {
                 <h2 className="card-title">Minted NFTs:</h2>
                 {
                     nfts.map((item, i) => <div className="gallery" key={item.id}>
-                        <a target="_blank" href={ObjectLink(item.id)}>
-                            <img src={item.url} max-width="300" max-height="200"></img>
+                        <a target="_blank" rel="noreferrer" href={ObjectLink(item.id)}>
+                            <img src={item.url} />
                             <div className="name">{item.name}</div>
                             <div className="desc">{item.description}</div>
                         </a>
