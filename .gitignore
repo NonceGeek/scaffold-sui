@@ -5,3 +5,5 @@ yarn.lock
 move/build/*
 move/sui.log.*
 .env.local
+*/build/sui.log.*
+.DS_Store

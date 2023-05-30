@@ -1,0 +1,17 @@
+2023-05-30T01:50:47.746026Z  INFO sui::client_commands: Showing 3 results.
+2023-05-30T01:50:47.747994Z  INFO sui::client_commands: 0x3090d1f529d997f91a7536d217bc7a8c1096afec5e753705f7cf244df6fb7731
+2023-05-30T01:50:47.747997Z  INFO sui::client_commands: 0x9827f562d02f7bbec9e16a43c27498f083a0a9e1317598bf864ad1511ebf9e8e <=
+2023-05-30T01:50:47.747998Z  INFO sui::client_commands: 0xa067ff1bcb2318717b9078e62c4aa4e090c922488d72d1593c5595bbf621aced
+2023-05-30T01:50:52.962998Z  INFO sui::client_commands:                              Object ID                              |  Gas Value 
+2023-05-30T01:50:52.963071Z  INFO sui::client_commands: ----------------------------------------------------------------------------------
+2023-05-30T01:50:52.963075Z  INFO sui::client_commands:  0x9422e5391074f06ec088046db4c079f6194aad6ef3905cc7b6cbedb091cbcedd | 9280816084 
+2023-05-30T02:14:02.313556Z  INFO sui::client_commands: [
+2023-05-30T02:14:02.315525Z  INFO sui::client_commands:   {
+2023-05-30T02:14:02.315533Z  INFO sui::client_commands:     "id": {
+2023-05-30T02:14:02.315552Z  INFO sui::client_commands:       "id": "0x9422e5391074f06ec088046db4c079f6194aad6ef3905cc7b6cbedb091cbcedd"
+2023-05-30T02:14:02.315556Z  INFO sui::client_commands:     },
+2023-05-30T02:14:02.315560Z  INFO sui::client_commands:     "balance": {
+2023-05-30T02:14:02.315563Z  INFO sui::client_commands:       "value": 9280816084
+2023-05-30T02:14:02.315567Z  INFO sui::client_commands:     }
+2023-05-30T02:14:02.315570Z  INFO sui::client_commands:   }
+2023-05-30T02:14:02.315573Z  INFO sui::client_commands: ]
