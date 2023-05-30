@@ -15,6 +15,7 @@ export function NavBar() {
         <ul className="menu menu-horizontal p-0 ml-5">
           <NavItem href="/" title="Nft Sample" />
           <NavItem href="/contract" title="Sample Contract" />
+          <NavItem href="/publish" title="Publish Module" />
           <NavItem href="/split-transfer" title="Split Coin & Transfer" />
           <NavItem href="/rpclist" title="Rpc Node" />
           {/* <NavItem href="/" title="AddrManager" />
