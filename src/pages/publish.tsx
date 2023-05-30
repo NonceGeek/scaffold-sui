@@ -35,7 +35,7 @@ export default function Publish(){
                     <p>dump command : sui move build --dump-bytecode-as-base64 --path . </p>
                     <textarea value={moduleBytes} onChange={e=>{
                         updateModuleBytes(e.target.value);
-                    }} className="textarea textarea-bordered	h-56 " placeholder="module bytes json"></textarea>
+                    }} className="textarea textarea-bordered h-72" placeholder="module bytes json" />
                     <button onClick={publishModule} className="btn btn-info">Publish </button>
                     <pre>
                         {result}
