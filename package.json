@@ -9,8 +9,8 @@
     "lint": "eslint --ext .ts src --max-warnings=0"
   },
   "dependencies": {
-    "@mysten/sui.js": "^0.33.0",
-    "@suiet/wallet-kit": "^0.2.10",
+    "@mysten/sui.js": "^0.34.1",
+    "@suiet/wallet-kit": "^0.2.12",
     "daisyui": "^2.24.0",
     "dotenv": "^16.0.1",
     "next": "^12.3.1-canary.0",
