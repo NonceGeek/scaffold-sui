@@ -2,12 +2,26 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useWallet } from "@suiet/wallet-kit";
-import { SignedMessage } from "@mysten/sui.js";
+import { fromSerializedSignature, messageWithIntent, IntentScope, toB64 } from "@mysten/sui.js";
+
+function uint8ToHex(uint8arr: Uint8Array) {
+    if (!uint8arr) {
+        return '';
+    }
+    let hexStr = '';
+    for (let i = 0; i < uint8arr.length; i++) {
+        let hex = (uint8arr[i] & 0xff).toString(16);
+        hex = (hex.length === 1) ? `0${hex}` : hex;
+        hexStr = `${hexStr}${hex}`;
+    }
+    return hexStr;
+}
 
 export function Signer() {
     const router = useRouter();
     const [data, updateSignData] = useState("");
-    const [result, updateSignResult] = useState<SignedMessage>({ messageBytes: "", signature: "" });
+    const [messageBytes, updateMessageBytes] = useState("");
+    const [result, updateSignResult] = useState<any>({});
     useEffect(() => {
         (async () => {
             console.log("render once ...");
@@ -23,8 +37,13 @@ export function Signer() {
                 message: new TextEncoder().encode(data)
             })
             if (!result) return
-            console.log('signMessage success', result)
-            updateSignResult(result);
+            const wrapperBytes = messageWithIntent(IntentScope.PersonalMessage, new TextEncoder().encode(data));
+            console.log("wrapperBytes", toB64(wrapperBytes));
+            updateMessageBytes(result.messageBytes);
+            console.log(`signMessage success ${result}`)
+            const signPair = fromSerializedSignature(result.signature);
+            console.log(signPair);
+            updateSignResult(signPair);
         } catch (e) {
             console.log(e);
             alert(e);
@@ -44,7 +63,13 @@ export function Signer() {
                     }
                 />
                 {
-                    result.messageBytes === "" || (<> <p>messageBytes: {result.messageBytes}</p> <b>signature: {result.signature}</b> </>)
+                    messageBytes === "" || (
+                        <>
+                            <p>messageBytes: {messageBytes}</p>
+                            <b>signature: {uint8ToHex(result.signature)}</b>
+                            <b>signatureScheme: {result.signatureScheme}</b>
+                            <b>pubKey: {result.pubKey.toBase64()}</b>
+                        </>)
                 }
                 <div className="card-actions justify-end">
                     <button
